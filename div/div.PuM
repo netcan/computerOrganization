@@ -1,0 +1,144 @@
+								; main:
+$P 00  A8 00					; 	in r0, 00h ;输入2个顶点小数，高四位r1(A): 0.xxxx,低四位r0(X): 0.yyyy
+$P 02  21						; 	mov r1, r0
+$P 03  91						; 	shr r1 ;右移一位，最高位符号位
+$P 04  BB 78					; 	mov r3, 78h;
+$P 06  3D						; 	and r1, r3 ;得到r1(A)
+$P 07  BB 0F					; 	mov r3, 0fh
+$P 09  3C						; 	and r0, r3
+$P 0A  8C						; 	shl r0 ; 左移3位
+$P 0B  8C						; 	shl r0
+$P 0C  8C						; 	shl r0
+$P 0D  BA 04					; 	mov r2, 04h; 计数用r2(C), r3(Q)
+								; 
+								; div:
+$P 0F  11						; 	sub r1, r0 ;(A)-(X)->A
+$P 10  F0 2E					; 	jnc overflow ;A >= 0
+$P 12  BB 00					; 	mov r3, 0 ; 0->Q, r3(Q)
+$P 14  8D						; 	shl r1 ;A <<= 1
+$P 15  8F						; 	shl r3 ; Q <<= 1
+$P 16  86						; 	dec r2 ; (C)-1->C
+$P 17  01						; 	add r1, r0 ; (A)+(X)->(A)
+								; judge:
+$P 18  D2 79					; 	st r2, 79h; store r2(C)
+$P 1A  BA 80					;	mov r2, 80h; 
+$P 1C  79						; 	test r1, r2 ; A < 0?
+$P 1D  F3 05					; 	jz subtraction; A >= 0
+$P 1F  8D						; 	shl r1 ;A <<= 1
+$P 20  8F						; 	shl r3 ; Q <<= 1
+$P 21  01						;	add r1, r0; (A)+(X)->A
+$P 22  E7 2A					; 	jmp loop
+								; 
+								; subtraction:	
+$P 24  8D						; 	shl r1 ;A <<= 1
+$P 25  BA 10					; 	mov r2, 10h ;
+$P 27  4B						; 	or r3, r2 ; Q_n = 1
+$P 28  8F						; 	shl r3 ;Q <<= 1
+$P 29  11						;	sub r1, r0; (A)-(X)->A
+								; 
+								; loop: 
+$P 2A  C2 79					;	ld r2, 79h;
+$P 2C  86  						; 	dec r2;(C)-1->C
+$P 2D  F3 02					; 	jz result
+$P 2F  E7 18					; 	jmp judge;
+								; 
+								; result:
+$P 31  BA 80					;	mov r2, 80h;
+$P 33  79						; 	test r1, r2 ; A < 0?
+$P 34  F2 03					; 	jnz handleResult
+$P 36  BA 10					; 	mov r2, 10h ; 
+$P 38  4B						; 	or r3, r2 ; Q_n = 1
+								; 
+								; handleResult: 
+								; 	; r3(Q)商，r1(A)余数
+$P 39  91						; 	shr r1
+$P 3A  91						; 	shr r1
+$P 3B  91						; 	shr r1
+$P 3C  47						; 	or r3, r1
+$P 3D  AF 00					; 	out 00h, r3
+$P 3F  E7 00					; 	jmp 00h;
+								; overflow:
+$P 41  BB FF					; 	mov r3, ffh
+$P 43  AF 00					; 	out 00h, r3
+$P 45  E7 00					; 	jmp 00h;
+								
+								
+$uM	00	6F0ED001	
+$uM	04	5F0ED005
+$uM	05	3EA2F800
+$uM	06	7F0ED000
+$uM	08	184AF800
+$uM	09	184AF900
+$uM	0A	7D4AF000
+$uM	0B	184AF200
+$uM	0C	184AF100
+$uM	0D	184AF500
+$uM	0E	190AF900
+$uM	0F	190AF200
+$uM	10	774BD011
+$uM	11	3A6AFA00
+$uM	12	3A6AFB13
+$uM	13	750BB000
+$uM	14	7FCED015
+$uM	15	7F49C000
+$uM	16	7FCED017
+$uM	17	7D09A000
+$uM	18	7DCAF019
+$uM	19	7F89D000
+$uM	1A	3A6AFB1B
+$uM	1B	7703B01C
+$uM	1C	7DCAF01D
+$uM	1D	7F89D000
+$uM	1E	7F4ED000	
+$uM	20	7FCED021
+$uM	21	7F49D000
+$uM	22	7DCAF023
+$uM	23	7F49D000
+$uM	24	1AEED825
+$uM	25	7F49D000	
+$uM	28	7FCED029
+$uM	29	7D09B000
+$uM	2A	3ACAF02B
+$uM	2B	7D09B000
+$uM	2C	1AEED82D
+$uM	2D	7D09B000	
+$uM	30	3A4AFA00
+$uM	31	3A4AFB00
+$uM	32	184AF300
+$uM	33	3A4AF700
+$uM	34	3A4AF600
+$uM	35	184AF300
+$uM	36	185AF800
+$uM	37	185AF900
+$uM	38	7F0AF000
+$uM	39	7F0AF000
+$uM	3A	7F0AF000
+$uM	3B	7F0AFD00
+$uM	3C	7F1AFD00
+$uM	3D	7F0AFC00
+$uM	3E	7F1AFC00
+$uM	3F	7F0AF03F	
+$uM	40	3A6AFB41
+$uM	41	5F0ED064
+$uM	42	570BD043
+$uM	43	7FCED062
+$uM	44	774BD045
+$uM	45	3A6AFA46
+$uM	46	778BD047
+$uM	47	3A6AFA00
+$uM	48	3A6AFB49
+$uM	49	750BB000
+$uM	4A	774BD04B
+$uM	4B	3A6AFA00	
+$uM	4E	7F8AD000	
+$uM	50	3A6AFB51
+$uM	51	5F0ED060
+$uM	52	3ACAF053
+$uM	53	7F49C000
+$uM	54	3ACAF055
+$uM	55	7D09A000	
+$uM	60	7703B061
+$uM	61	7E9AF000
+$uM	62	7E19B063
+$uM	63	3A6AFA00
+$uM	64	761BB000
