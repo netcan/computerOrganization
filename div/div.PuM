@@ -1,66 +1,66 @@
 								; main:
-$P 00  A8 00					; 	in r0, 00h ;输入2个顶点小数，高四位r1(A): 0.xxxx,低四位r0(X): 0.yyyy
-$P 02  21						; 	mov r1, r0
-$P 03  91						; 	shr r1 ;右移一位，最高位符号位
-$P 04  BB 78					; 	mov r3, 78h;
-$P 06  3D						; 	and r1, r3 ;得到r1(A)
-$P 07  BB 0F					; 	mov r3, 0fh
-$P 09  3C						; 	and r0, r3
-$P 0A  8C						; 	shl r0 ; 左移3位
-$P 0B  8C						; 	shl r0
-$P 0C  8C						; 	shl r0
-$P 0D  BA 04					; 	mov r2, 04h; 计数用r2(C), r3(Q)
-								; 
-								; div:
-$P 0F  11						; 	sub r1, r0 ;(A)-(X)->A
-$P 10  F0 2E					; 	jnc overflow ;A >= 0
-$P 12  BB 00					; 	mov r3, 0 ; 0->Q, r3(Q)
-$P 14  8D						; 	shl r1 ;A <<= 1
-$P 15  8F						; 	shl r3 ; Q <<= 1
-$P 16  86						; 	dec r2 ; (C)-1->C
-$P 17  01						; 	add r1, r0 ; (A)+(X)->(A)
-								; judge:
-$P 18  D2 79					; 	st r2, 79h; store r2(C)
-$P 1A  BA 80					;	mov r2, 80h; 
-$P 1C  79						; 	test r1, r2 ; A < 0?
-$P 1D  F3 05					; 	jz subtraction; A >= 0
-$P 1F  8D						; 	shl r1 ;A <<= 1
-$P 20  8F						; 	shl r3 ; Q <<= 1
-$P 21  01						;	add r1, r0; (A)+(X)->A
-$P 22  E7 2A					; 	jmp loop
-								; 
-								; subtraction:	
-$P 24  8D						; 	shl r1 ;A <<= 1
-$P 25  BA 10					; 	mov r2, 10h ;
-$P 27  4B						; 	or r3, r2 ; Q_n = 1
-$P 28  8F						; 	shl r3 ;Q <<= 1
-$P 29  11						;	sub r1, r0; (A)-(X)->A
-								; 
-								; loop: 
-$P 2A  C2 79					;	ld r2, 79h;
-$P 2C  86  						; 	dec r2;(C)-1->C
-$P 2D  F3 02					; 	jz result
-$P 2F  E7 18					; 	jmp judge;
-								; 
-								; result:
-$P 31  BA 80					;	mov r2, 80h;
-$P 33  79						; 	test r1, r2 ; A < 0?
-$P 34  F2 03					; 	jnz handleResult
-$P 36  BA 10					; 	mov r2, 10h ; 
-$P 38  4B						; 	or r3, r2 ; Q_n = 1
-								; 
-								; handleResult: 
-								; 	; r3(Q)商，r1(A)余数
-$P 39  91						; 	shr r1
-$P 3A  91						; 	shr r1
-$P 3B  91						; 	shr r1
-$P 3C  47						; 	or r3, r1
-$P 3D  AF 00					; 	out 00h, r3
-$P 3F  E7 00					; 	jmp 00h;
-								; overflow:
-$P 41  BB FF					; 	mov r3, ffh
-$P 43  AF 00					; 	out 00h, r3
-$P 45  E7 00					; 	jmp 00h;
+$P	00	A8	00					; 	in r0, 00h ;输入2个顶点小数，高四位r1(A): 0.xxxx,低四位r0(X): 0.yyyy
+$P	02	21	 					; 	mov r1, r0
+$P	03	91	 					; 	shr r1 ;右移一位，最高位符号位
+$P	04	BB	78					; 	mov r3, 78h;
+$P	06	3D	 					; 	and r1, r3 ;得到r1(A)
+$P	07	BB	0F					; 	mov r3, 0fh
+$P	09	3C	 					; 	and r0, r3
+$P	0A	8C	 					; 	shl r0 ; 左移3位
+$P	0B	8C	 					; 	shl r0
+$P	0C	8C	 					; 	shl r0
+$P	0D	BA	04					; 	mov r2, 04h; 计数用r2(C), r3(Q)
+  	  	  	 					; 
+  	  	  	 					; div:
+$P	0F	11	 					; 	sub r1, r0 ;(A)-(X)->A
+$P	10	F0	2E					; 	jnc overflow ;A >= 0
+$P	12	BB	00					; 	mov r3, 0 ; 0->Q, r3(Q)
+$P	14	8D	 					; 	shl r1 ;A <<= 1
+$P	15	8F	 					; 	shl r3 ; Q <<= 1
+$P	16	86	 					; 	dec r2 ; (C)-1->C
+$P	17	01	 					; 	add r1, r0 ; (A)+(X)->(A)
+  	  	  	 					; judge:
+$P	18	D2	79					; 	st r2, 79h; store r2(C)
+$P	1A	BA	80					;	mov r2, 80h; 
+$P	1C	79	 					; 	test r1, r2 ; A < 0?
+$P	1D	F3	05					; 	jz subtraction; A >= 0
+$P	1F	8D	 					; 	shl r1 ;A <<= 1
+$P	20	8F	 					; 	shl r3 ; Q <<= 1
+$P	21	01	 					;	add r1, r0; (A)+(X)->A
+$P	22	E7	2A					; 	jmp loop
+  	  	  	 					; 
+  	  	  	 					; subtraction:	
+$P	24	8D	 					; 	shl r1 ;A <<= 1
+$P	25	BA	10					; 	mov r2, 10h ;
+$P	27	4B	 					; 	or r3, r2 ; Q_n = 1
+$P	28	8F	 					; 	shl r3 ;Q <<= 1
+$P	29	11	 					;	sub r1, r0; (A)-(X)->A
+  	  	  	 					; 
+  	  	  	 					; loop: 
+$P	2A	C2	79					;	ld r2, 79h;
+$P	2C	86	 					; 	dec r2;(C)-1->C
+$P	2D	F3	02					; 	jz result
+$P	2F	E7	18					; 	jmp judge;
+  	  	  	 					; 
+  	  	  	 					; result:
+$P	31	BA	80					;	mov r2, 80h;
+$P	33	79	 					; 	test r1, r2 ; A < 0?
+$P	34	F2	03					; 	jnz handleResult
+$P	36	BA	10					; 	mov r2, 10h ; 
+$P	38	4B	 					; 	or r3, r2 ; Q_n = 1
+  	  	  	 					; 
+  	  	  	 					; handleResult: 
+  	  	  	 					; 	; r3(Q)商，r1(A)余数
+$P	39	91	 					; 	shr r1
+$P	3A	91	 					; 	shr r1
+$P	3B	91	 					; 	shr r1
+$P	3C	47	 					; 	or r3, r1
+$P	3D	AF	00					; 	out 00h, r3
+$P	3F	E7	00					; 	jmp 00h;
+  	  	  	 					; overflow:
+$P	41	BB	FF					; 	mov r3, ffh
+$P	43	AF	00					; 	out 00h, r3
+$P	45	E7	00					; 	jmp 00h;
 								
 								
 $uM	00	6F0ED001	
